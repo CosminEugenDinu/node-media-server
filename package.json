@@ -1,0 +1,22 @@
+{
+  "name": "node-windows-exe",
+  "version": "1.0.0",
+  "description": "",
+  "bin": "server.js",
+  "pkg": {
+    "assets": [
+      "node_modules/**/*",
+      "static/**/*"
+    ],
+    "targets": [
+      "node16-win-x64"
+    ],
+    "outputPath": "dist"
+  },
+  "author": "Cos",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "get-port": "^5.1.1"
+  }
+}
