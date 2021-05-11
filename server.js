@@ -4,16 +4,20 @@ const express = require("express");
 const getPort = require("get-port");
 const { networkInterfaces } = require("os");
 
-const filesToDisplay = {
-  ".mkv": "video",
-  ".mp4": "video",
+const settings = {
+  devPort: false, 
+  openBrowser: true,
+  filesToDisplay: {
+    ".mkv": "video",
+    ".mp4": "video",
+  },
 };
 
 (async function () {
   const app = express();
 
   // find available port (if not 80)
-  const port = await getPort({ port: 80 });
+  const port = settings.devPort || await getPort({ port: 80 });
 
   // Current Working Directory - used in compiled app (win-x64)
   app.use("/", express.static(path.join(__dirname, "./static")));
@@ -45,7 +49,7 @@ const filesToDisplay = {
       });
     } else if (fs.lstatSync(sysRelPath).isFile()) {
       if (req.query.viewer === "yes") {
-        res.send(fileViewerHtml(sysRelPath, req.path, req.query.ext));
+        res.send(fileViewerHtml(sysRelPath, req.path, pathUrlObj.ext));
       } else {
         res.sendFile(...prepareFileResponse(pathUrlObj));
       }
@@ -60,14 +64,17 @@ const filesToDisplay = {
         : process.platform == "win32"
         ? "start"
         : "xdg-open";
-    require("child_process").exec(`${start} http://localhost:${port}/networks`);
+    settings.openBrowser &&
+      require("child_process").exec(
+        `${start} http://localhost:${port}/networks`
+      );
   });
 })();
 
 /****************** library *******************/
 
 function fileViewerHtml(sysRelPath, fileURLPath, fileExt) {
-  const fileType = filesToDisplay[fileExt];
+  const fileType = settings.filesToDisplay[fileExt];
   return htmlTemplate(
     (fileType === "video" &&
       videoHtmlElement(sysRelPath, fileURLPath, fileExt)) ||
@@ -113,6 +120,7 @@ function contentTypeExt(ext) {
   const ext_type = {
     ".mkv": "video/webm",
     ".mp4": "video/mp4",
+    ".avi": "video/avi",
     ".vtt": "text/vtt",
   };
   return ext_type[ext];
@@ -153,7 +161,7 @@ function videoHtmlElement(sysRelPath, videoUrl, videoExt) {
 function subtitleHtml(sysRelPath) {
   const htmlFragment = [];
   const sysRelPathObj = path.parse(sysRelPath);
-  const fileListRef = fs.readdirSync(sysRelPathObj.dir || './');
+  const fileListRef = fs.readdirSync(sysRelPathObj.dir || "./");
   const langs = {
     ro: "Romanian",
     en: "English",
@@ -202,11 +210,12 @@ function fileDisplayHtml(isDir, fileUrl, fileName, fileExt) {
     video: videoIcon,
     unknown: fileUnknownIcon,
   };
-  const fileIcon = fileDisplayIcons[filesToDisplay[fileExt] || "directory"];
-  if (isDir || filesToDisplay[fileExt]) {
+  const fileIcon =
+    fileDisplayIcons[settings.filesToDisplay[fileExt] || "directory"];
+  if (isDir || settings.filesToDisplay[fileExt]) {
     return `
     <div class="file-link">
-      <a href="${(isDir && fileUrl) || `${fileUrl}?viewer=yes&ext=${fileExt}`}">
+      <a href="${(isDir && fileUrl) || `${fileUrl}?viewer=yes`}">
         ${fileIcon}<span>${fileName}</span>
       </a>
     </div>`;
