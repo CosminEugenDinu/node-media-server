@@ -18,6 +18,10 @@ The links showed are the entry point of application in local network, i.e. can b
 pkg .
 ```
 Will result a single file `node-media-server.exe` in `dist` directory (more info in `"pkg"` key of `package.json`). Running this executable in windows-x64 environment will start embeded `node.js` server and open default browser with available networks this server can be accessed. Links provided can be accessed from any devide in local network.
+Add exception in Windows firewall. Open `cmd.exe` with elevated permissions `Run as administrator` or with batch command `runas /user:administrator "cmd.exe"` and enter following command:
+```batch
+netsh advfirewall firewall add rule name="node-media-server.exe" dir=in program="C:\path\to\node-media-server.exe" protocol=tcp action=allow
+```
 ## Shutdown server
 Server can be shutdown appending `/shutdown` to the `url` (without query parameters).
 
