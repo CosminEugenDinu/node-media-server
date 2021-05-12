@@ -1,7 +1,7 @@
 {
   "name": "node-media-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Network file browser and viewer.",
   "bin": "server.js",
   "pkg": {
     "assets": [
