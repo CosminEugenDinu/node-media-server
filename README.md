@@ -1,11 +1,11 @@
 # node-media-server
-Watch videos in local network from Windows or Linux node.js server.
+File browser and viewer. Watch videos in local network from Windows or Linux node.js server.
 Html5 video player without browser JavaScript. Can be compiled for Windows, copied in videos folder, and run from there.
 ## Install
 ```bash
 git clone https://github.com/CosminEugenDinu/node-media-server.git
 cd node-media-server
-npm install
+yarn install
 ```
 ## Run server
 ```bash
